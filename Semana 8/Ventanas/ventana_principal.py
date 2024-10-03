@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import tkinter as tk
 from customtkinter import *
 
 from .Ventana_nose import Nose  
@@ -14,7 +13,7 @@ class Main(ctk.CTk):
         self.config_window()
 
     def config_window(self):
-        self.iconbitmap('./gato.ico') 
+        self.iconbitmap('.\Semana 8\Ventanas\gato.ico') 
         w, h = 1024, 600
         util_ventana.centrar_ventana(self, w, h)
 

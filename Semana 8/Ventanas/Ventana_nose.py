@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import tkinter as tk 
 from .ventana_interfaz import New_ventana
 
 class Nose(New_ventana):
