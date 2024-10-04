@@ -183,8 +183,16 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
 
     def ingresar_profesor(self):
-        # Implementar la lógica para agregar un profesor
-        pass
+        #acceder a los entry de la pestaña estudiante
+        nombre = self.entries["Profesor"]["nombre"].get()
+        apellido = self.entries["Profesor"]["apellido"].get()
+        fecha_nacimiento = self.entry_fecha_nacimiento.get()
+        n_empleado = self.entry_num_empleado.get()
+        departamento = self.entry_departamento.get()
+        
+        profesor =  Profesor(nombre, apellido,fecha_nacimiento ,n_empleado, departamento)
+        tree = self.tab2.winfo_children()[1].winfo_children()[0]
+        tree.insert("", "end", values=(profesor.nombre, profesor.apellido, profesor.fecha_de_nacimiento, profesor.n_empleado, profesor.departamento))
 
     def ingresar_asignatura(self):
         # Implementar la lógica para agregar una asignatura
