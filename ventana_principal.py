@@ -161,7 +161,7 @@ class SistemaGestionUniversitaria(ctk.CTk):
         carrera = self.entry_carrera.get()
         semestre = self.entry_semestre.get()
         
-        # Imprimir los valores de los Entry para debug
+        # Imprimir los valores de los Entry para debugg
         print(f"DEBUG: Nombre desde Entry: {nombre}")
         print(f"DEBUG: Apellido desde Entry: {apellido}")
         # Crear un objeto Estudiante con los datos ingresados
