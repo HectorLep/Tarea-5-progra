@@ -55,15 +55,27 @@ class Estudiante(Persona):
     def matricula(self):
         return self.__matricula
     
+    @matricula.setter
+    def matricula(self, matricula):
+        self.__matricula = matricula
+    
     #carrera: Permite obtener y establecer la carrera.
     @property
     def carrera(self):
         return self.__carrera
     
+    @carrera.setter
+    def carrera(self, carrera):
+        self.__carrera = carrera
+    
     #semestre: Permite obtener y establecer el semestre.
     @property
     def semestre(self):
         return self.__semestre
+    
+    @semestre.setter
+    def semestre(self, semestre):
+        self.__semestre = semestre
     
 class Profesor(Persona):
     def __init__(self, nombre, apellido, fecha_de_nacimiento,n_empleado, departamento):

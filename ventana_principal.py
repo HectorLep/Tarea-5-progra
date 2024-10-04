@@ -7,6 +7,7 @@ import os
 from Clases.Asignatura import Asignatura
 from Clases.ProgramaAcademico import ProgramaAcademico
 from Clases.Persona import Persona  
+from Clases.Persona import *
 from Clases.Grupo import Grupo
 import Ventanas.util_ventana as util_ventana
 from Ventanas.util_ventana import centrar_ventana  
@@ -18,12 +19,11 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
         # Configuración de la ventana principal
         self.title("Sistema de Gestión Universitaria")
-        self.geometry("1200x700")
-        centrar_ventana(self, 1200, 700)  # Para centrar la ventana
+        self.geometry("1600x900")
+        centrar_ventana(self, 1600, 900)
         self.config_window()
         self.tabview = ctk.CTkTabview(self, width=600, height=500)
         self.tabview.pack(padx=20, pady=20)
-
         self.crear_pestanas()
         
     def config_window(self):
@@ -47,7 +47,7 @@ class SistemaGestionUniversitaria(ctk.CTk):
     def configurar_pestana1(self):
         # Formulario y Treeview para estudiantes
         self.configurar_formulario(self.tab1, "Estudiante", self.ingresar_estudiante)
-        self.configurar_treeview(self.tab1, ["Nombre", "Apellido", "Matrícula", "Carrera", "Semestre"])
+        self.configurar_treeview(self.tab1, ["Nombre", "Apellido","Fecha nacimiento" ,"Matrícula", "Carrera", "Semestre"])
 
     def configurar_pestana2(self):
         # Formulario y Treeview para profesores
@@ -70,31 +70,36 @@ class SistemaGestionUniversitaria(ctk.CTk):
         frame_formulario.pack(side="left", fill="both", expand=True, padx=10, pady=10)
 
         label_nombre = ctk.CTkLabel(frame_formulario, text=f"Nombre del {tipo}:")
-        label_nombre.pack(pady=5)
+        label_nombre.pack(pady=4)
         self.entry_nombre = ctk.CTkEntry(frame_formulario)
-        self.entry_nombre.pack(pady=5)
+        self.entry_nombre.pack(pady=4)
 
         label_apellido = ctk.CTkLabel(frame_formulario, text=f"Apellido del {tipo}:")
-        label_apellido.pack(pady=5)
+        label_apellido.pack(pady=4)
         self.entry_apellido = ctk.CTkEntry(frame_formulario)
-        self.entry_apellido.pack(pady=5)
+        self.entry_apellido.pack(pady=4)
 
         # Campos adicionales según el tipo
         if tipo == "Estudiante":
+            label_fecha_nacimiento = ctk.CTkLabel(frame_formulario, text="Fecha de Nacimiento:")
+            label_fecha_nacimiento.pack(pady=4)
+            self.entry_fecha_nacimiento = ctk.CTkEntry(frame_formulario)
+            self.entry_fecha_nacimiento.pack(pady=4)
+            
             label_matricula = ctk.CTkLabel(frame_formulario, text="Matrícula:")
             label_matricula.pack(pady=5)
             self.entry_matricula = ctk.CTkEntry(frame_formulario)
-            self.entry_matricula.pack(pady=5)
+            self.entry_matricula.pack(pady=4)
 
             label_carrera = ctk.CTkLabel(frame_formulario, text="Carrera:")
-            label_carrera.pack(pady=5)
+            label_carrera.pack(pady=4)
             self.entry_carrera = ctk.CTkEntry(frame_formulario)
-            self.entry_carrera.pack(pady=5)
+            self.entry_carrera.pack(pady=4)
 
             label_semestre = ctk.CTkLabel(frame_formulario, text="Semestre:")
-            label_semestre.pack(pady=5)
+            label_semestre.pack(pady=4)
             self.entry_semestre = ctk.CTkEntry(frame_formulario)
-            self.entry_semestre.pack(pady=5)
+            self.entry_semestre.pack(pady=4)
 
         elif tipo == "Profesor":
             label_num_empleado = ctk.CTkLabel(frame_formulario, text="Número de Empleado:")
@@ -141,6 +146,7 @@ class SistemaGestionUniversitaria(ctk.CTk):
         tree = ttk.Treeview(frame_treeview, columns=columnas, show="headings")
         for col in columnas:
             tree.heading(col, text=col)
+            tree.column(col, width=110, anchor="center")
         tree.pack(expand=True, fill="both", padx=10, pady=10)
 
         boton_eliminar = ctk.CTkButton(frame_treeview, text="Eliminar", fg_color="black", text_color="white")
@@ -148,8 +154,28 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
     # Métodos para ingresar datos
     def ingresar_estudiante(self):
-        # Implementar la lógica para agregar un estudiante
-        pass
+        nombre = self.entry_nombre.get()
+        apellido = self.entry_apellido.get()
+        fecha_nacimiento = self.entry_fecha_nacimiento.get()
+        matricula = self.entry_matricula.get()
+        carrera = self.entry_carrera.get()
+        semestre = self.entry_semestre.get()
+        
+        # Imprimir los valores de los Entry para debug
+        print(f"DEBUG: Nombre desde Entry: {nombre}")
+        print(f"DEBUG: Apellido desde Entry: {apellido}")
+        # Crear un objeto Estudiante con los datos ingresados
+        
+        estudiante = Estudiante(nombre, apellido, fecha_nacimiento, matricula, carrera, semestre)
+        
+        # Imprimir los valores del objeto Estudiante para debug
+        print(f"DEBUG: Nombre del estudiante (getter): {estudiante.nombre}")
+        print(f"DEBUG: Apellido del estudiante (getter): {estudiante.apellido}")
+        
+        # Agregar los datos del estudiante al Treeview
+        tree = self.tab1.winfo_children()[1].winfo_children()[0]  # Acceder al Treeview
+        tree.insert("", "end", values=(estudiante.nombre, estudiante.apellido, estudiante.fecha_de_nacimiento, estudiante.matricula, estudiante.carrera, estudiante.semestre))
+
 
     def ingresar_profesor(self):
         # Implementar la lógica para agregar un profesor
