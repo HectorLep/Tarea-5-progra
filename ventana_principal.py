@@ -52,7 +52,7 @@ class SistemaGestionUniversitaria(ctk.CTk):
     def configurar_pestana2(self):
         # Formulario y Treeview para profesores
         self.configurar_formulario(self.tab2, "Profesor", self.ingresar_profesor)
-        self.configurar_treeview(self.tab2, ["Nombre", "Apellido", "Número Empleado", "Departamento"])
+        self.configurar_treeview(self.tab2, ["Nombre", "Apellido","Fecha nacimiento" ,"Número Empleado", "Departamento"])
 
     def configurar_pestana3(self):
         # Formulario y Treeview para asignaturas
@@ -106,6 +106,10 @@ class SistemaGestionUniversitaria(ctk.CTk):
             self.entry_semestre.pack(pady=4)
 
         elif tipo == "Profesor":
+            label_fecha_nacimiento = ctk.CTkLabel(frame_formulario, text="Fecha de Nacimiento:")
+            label_fecha_nacimiento.pack(pady=5)
+            self.entry_fecha_nacimiento = ctk.CTkEntry(frame_formulario)
+            self.entry_fecha_nacimiento.pack(pady=5)
             label_num_empleado = ctk.CTkLabel(frame_formulario, text="Número de Empleado:")
             label_num_empleado.pack(pady=5)
             self.entry_num_empleado = ctk.CTkEntry(frame_formulario)
