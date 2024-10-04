@@ -16,7 +16,7 @@ from Ventanas.Ventana_nose import *
 class SistemaGestionUniversitaria(ctk.CTk):
     def __init__(self):
         super().__init__()
-
+        self.entries = {}  
         # Configuración de la ventana principal
         self.title("Sistema de Gestión Universitaria")
         self.geometry("1600x900")
@@ -71,14 +71,18 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
         label_nombre = ctk.CTkLabel(frame_formulario, text=f"Nombre del {tipo}:")
         label_nombre.pack(pady=4)
-        self.entry_nombre = ctk.CTkEntry(frame_formulario)
-        self.entry_nombre.pack(pady=4)
+        entry_nombre = ctk.CTkEntry(frame_formulario)
+        entry_nombre.pack(pady=4)
 
         label_apellido = ctk.CTkLabel(frame_formulario, text=f"Apellido del {tipo}:")
         label_apellido.pack(pady=4)
-        self.entry_apellido = ctk.CTkEntry(frame_formulario)
-        self.entry_apellido.pack(pady=4)
-
+        entry_apellido = ctk.CTkEntry(frame_formulario)
+        entry_apellido.pack(pady=4)
+        
+        self.entries[tipo] = {
+            "nombre": entry_nombre,
+            "apellido": entry_apellido
+        }
         # Campos adicionales según el tipo
         if tipo == "Estudiante":
             label_fecha_nacimiento = ctk.CTkLabel(frame_formulario, text="Fecha de Nacimiento:")
@@ -154,8 +158,9 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
     # Métodos para ingresar datos
     def ingresar_estudiante(self):
-        nombre = self.entry_nombre.get()
-        apellido = self.entry_apellido.get()
+        # Acceder a los Entry de la pestaña Estudiante
+        nombre = self.entries["Estudiante"]["nombre"].get()
+        apellido = self.entries["Estudiante"]["apellido"].get()
         fecha_nacimiento = self.entry_fecha_nacimiento.get()
         matricula = self.entry_matricula.get()
         carrera = self.entry_carrera.get()
