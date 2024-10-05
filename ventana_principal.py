@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from tkinter import ttk
+from CTkMessagebox import CTkMessagebox
 import sys
 import os
+import re
 
 # Importar las clases necesarias desde la carpeta Clases y Ventanas
 from Clases.Asignatura import Asignatura
@@ -68,21 +70,29 @@ class SistemaGestionUniversitaria(ctk.CTk):
         # Formulario genérico basado en el tipo (Estudiante, Profesor, etc.)
         frame_formulario = ctk.CTkFrame(tab)
         frame_formulario.pack(side="left", fill="both", expand=True, padx=10, pady=10)
-
-        label_nombre = ctk.CTkLabel(frame_formulario, text=f"Nombre del {tipo}:")
+        
+        # Condición especial para la asignatura
+        if tipo == "Asignatura":
+            label_nombre = ctk.CTkLabel(frame_formulario, text=f"Nombre de la {tipo}:")
+        else:
+            label_nombre = ctk.CTkLabel(frame_formulario, text=f"Nombre del {tipo}:")
+            
         label_nombre.pack(pady=4)
         entry_nombre = ctk.CTkEntry(frame_formulario)
         entry_nombre.pack(pady=4)
 
-        label_apellido = ctk.CTkLabel(frame_formulario, text=f"Apellido del {tipo}:")
-        label_apellido.pack(pady=4)
-        entry_apellido = ctk.CTkEntry(frame_formulario)
-        entry_apellido.pack(pady=4)
+        self.entries[tipo] = {"nombre": entry_nombre,}
         
-        self.entries[tipo] = {
-            "nombre": entry_nombre,
-            "apellido": entry_apellido
-        }
+        # Solo mostrar "Apellido" para Estudiante y Profesor
+        if tipo in ["Estudiante", "Profesor"]:
+            label_apellido = ctk.CTkLabel(frame_formulario, text=f"Apellido del {tipo}:")
+            label_apellido.pack(pady=4)
+            entry_apellido = ctk.CTkEntry(frame_formulario)
+            entry_apellido.pack(pady=4)
+
+            # Agregar apellido al diccionario de entries
+            self.entries[tipo]["apellido"] = entry_apellido
+
         # Campos adicionales según el tipo
         if tipo == "Estudiante":
             label_fecha_nacimiento = ctk.CTkLabel(frame_formulario, text="Fecha de Nacimiento:")
@@ -106,10 +116,10 @@ class SistemaGestionUniversitaria(ctk.CTk):
             self.entry_semestre.pack(pady=4)
 
         elif tipo == "Profesor":
-            label_fecha_nacimiento = ctk.CTkLabel(frame_formulario, text="Fecha de Nacimiento:")
-            label_fecha_nacimiento.pack(pady=5)
-            self.entry_fecha_nacimiento = ctk.CTkEntry(frame_formulario)
-            self.entry_fecha_nacimiento.pack(pady=5)
+            label_fecha_nacimiento_p = ctk.CTkLabel(frame_formulario, text="Fecha de Nacimiento:")
+            label_fecha_nacimiento_p.pack(pady=5)
+            self.entry_fecha_nacimiento_p = ctk.CTkEntry(frame_formulario)
+            self.entry_fecha_nacimiento_p.pack(pady=5)
             label_num_empleado = ctk.CTkLabel(frame_formulario, text="Número de Empleado:")
             label_num_empleado.pack(pady=5)
             self.entry_num_empleado = ctk.CTkEntry(frame_formulario)
@@ -145,7 +155,26 @@ class SistemaGestionUniversitaria(ctk.CTk):
         # Botón de ingreso
         boton_ingresar = ctk.CTkButton(frame_formulario, text=f"Ingresar {tipo}", command=command_func)
         boton_ingresar.pack(pady=10)
-
+        
+    def validar_str(self, texto):
+        if re.match(r"^[A-Za-z\s]+$", texto):
+            return True
+        else:
+            CTkMessagebox(title="Error de Validación", message="Este campo solo debe contener letras y espacios.", icon="warning")
+            return False
+    def validar_fechas(self, fecha):
+        if re.match(r"^[0-9]{2}/[0-9]{2}/[0-9]{4}$", fecha):
+            return True
+        else:
+            CTkMessagebox(title="Error de Validación", message="La fecha debe contener el formato dd/mm/yyyy.", icon="warning")
+            return False
+    def validar_matricula(self, matricula):
+        if re.match(r"^[A-Za-z][A-Za-z0-9]{4,}$", matricula):
+            return True
+        else:
+            CTkMessagebox(title="Error de Validación", message="La matrícula debe comenzar con una letra y contener al menos 5 caracteres alfanuméricos.", icon="warning")
+            return False
+        
     def configurar_treeview(self, tab, columnas):
         # Treeview genérico para cada pestaña
         frame_treeview = ctk.CTkFrame(tab)
@@ -169,43 +198,73 @@ class SistemaGestionUniversitaria(ctk.CTk):
         matricula = self.entry_matricula.get()
         carrera = self.entry_carrera.get()
         semestre = self.entry_semestre.get()
-        
-        # Imprimir los valores de los Entry para debugg
-        print(f"DEBUG: Nombre desde Entry: {nombre}")
-        print(f"DEBUG: Apellido desde Entry: {apellido}")
+
+        # Validar que el nombre, apellido y carrera solo contengan letras y espacios
+        if not self.validar_str(nombre):
+            return
+        if not self.validar_str(apellido):
+            return
+        if not self.validar_str(carrera):
+            return
+        if not self.validar_matricula(matricula):
+            return
+        if not self.validar_fechas(fecha_nacimiento):
+            return
+
         # Crear un objeto Estudiante con los datos ingresados
-        
         estudiante = Estudiante(nombre, apellido, fecha_nacimiento, matricula, carrera, semestre)
-        
-        # Imprimir los valores del objeto Estudiante para debug
-        print(f"DEBUG: Nombre del estudiante (getter): {estudiante.nombre}")
-        print(f"DEBUG: Apellido del estudiante (getter): {estudiante.apellido}")
-        
+
         # Agregar los datos del estudiante al Treeview
         tree = self.tab1.winfo_children()[1].winfo_children()[0]  # Acceder al Treeview
         tree.insert("", "end", values=(estudiante.nombre, estudiante.apellido, estudiante.fecha_de_nacimiento, estudiante.matricula, estudiante.carrera, estudiante.semestre))
 
-
     def ingresar_profesor(self):
-        #acceder a los entry de la pestaña estudiante
+        # Acceder a los Entry de la pestaña Profesor
         nombre = self.entries["Profesor"]["nombre"].get()
         apellido = self.entries["Profesor"]["apellido"].get()
-        fecha_nacimiento = self.entry_fecha_nacimiento.get()
+        fecha_nacimiento = self.entry_fecha_nacimiento_p.get()
         n_empleado = self.entry_num_empleado.get()
         departamento = self.entry_departamento.get()
-        
-        profesor =  Profesor(nombre, apellido,fecha_nacimiento ,n_empleado, departamento)
+
+        # Validar que el nombre, apellido y departamento solo contengan letras y espacios
+        if not self.validar_str(nombre):
+            return
+        if not self.validar_str(apellido):
+            return
+        if not self.validar_str(departamento):
+            return
+        try:
+            n_empleado = int(n_empleado)
+        except ValueError: 
+            CTkMessagebox(title="Error de Validación", message="El número de empleado debe ser un número entero.", icon="warning")
+            return
+        if not self.validar_fechas(fecha_nacimiento):
+            return
+
+        # Crear un objeto Profesor con los datos ingresados
+        profesor = Profesor(nombre, apellido, fecha_nacimiento, n_empleado, departamento)
+
+        # Agregar los datos del profesor al Treeview
         tree = self.tab2.winfo_children()[1].winfo_children()[0]
         tree.insert("", "end", values=(profesor.nombre, profesor.apellido, profesor.fecha_de_nacimiento, profesor.n_empleado, profesor.departamento))
 
     def ingresar_asignatura(self):
-        # Implementar la lógica para agregar una asignatura
-        pass
+        nombre = self.entries["Asignatura"]["nombre"].get()
+        codigo = self.entry_codigo.get()
+        creditos = self.entry_creditos.get()
+        
+        asignatura = Asignatura(nombre, codigo, creditos)
+        tree = self.tab3.winfo_children()[1].winfo_children()[0]
+        tree.insert("", "end", values=(asignatura.nombre, asignatura.codigo, asignatura.creditos))
 
     def ingresar_grupo(self):
-        # Implementar la lógica para agregar un grupo
-        pass
-
+        nombre = self.entries["Grupo"]["nombre"].get()
+        num_grupo = self.entry_num_grupo.get()
+        asignatura = self.entry_asignatura.get()
+        
+        grupo = Grupo(nombre, num_grupo, asignatura)
+        tree = self.tab4.winfo_children()[1].winfo_children()[0]
+        tree.insert("", "end", values=(grupo.nombre, grupo.num_grupo, grupo.asignatura))
 
 if __name__ == "__main__":
     ctk.set_appearance_mode("System")
