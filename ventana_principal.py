@@ -156,6 +156,12 @@ class SistemaGestionUniversitaria(ctk.CTk):
         boton_ingresar = ctk.CTkButton(frame_formulario, text=f"Ingresar {tipo}", command=command_func)
         boton_ingresar.pack(pady=10)
         
+    def validar_no_vacio(self, *campos):
+        for campo in campos:
+            if not campo.strip(): 
+                CTkMessagebox(title="Error de Validación", message="Todos los campos deben estar llenos.", icon="warning")
+                return False
+        return True
     def validar_str(self, texto):
         if re.match(r"^[A-Za-z\s]+$", texto):
             return True
@@ -189,16 +195,17 @@ class SistemaGestionUniversitaria(ctk.CTk):
         boton_eliminar = ctk.CTkButton(frame_treeview, text="Eliminar", fg_color="black", text_color="white")
         boton_eliminar.pack(pady=10)
 
-    # Métodos para ingresar datos
     def ingresar_estudiante(self):
-        # Acceder a los Entry de la pestaña Estudiante
         nombre = self.entries["Estudiante"]["nombre"].get()
         apellido = self.entries["Estudiante"]["apellido"].get()
         fecha_nacimiento = self.entry_fecha_nacimiento.get()
         matricula = self.entry_matricula.get()
         carrera = self.entry_carrera.get()
         semestre = self.entry_semestre.get()
-
+        
+        # Verificar que no haya campos vacíos
+        if not self.validar_no_vacio(nombre, apellido, fecha_nacimiento, matricula, carrera, semestre):
+            return
         # Validar que el nombre, apellido y carrera solo contengan letras y espacios
         if not self.validar_str(nombre):
             return
@@ -219,13 +226,15 @@ class SistemaGestionUniversitaria(ctk.CTk):
         tree.insert("", "end", values=(estudiante.nombre, estudiante.apellido, estudiante.fecha_de_nacimiento, estudiante.matricula, estudiante.carrera, estudiante.semestre))
 
     def ingresar_profesor(self):
-        # Acceder a los Entry de la pestaña Profesor
         nombre = self.entries["Profesor"]["nombre"].get()
         apellido = self.entries["Profesor"]["apellido"].get()
         fecha_nacimiento = self.entry_fecha_nacimiento_p.get()
         n_empleado = self.entry_num_empleado.get()
         departamento = self.entry_departamento.get()
-
+        
+        # Verificar que no haya campos vacíos
+        if not self.validar_no_vacio(nombre, apellido, fecha_nacimiento, n_empleado, departamento):
+            return
         # Validar que el nombre, apellido y departamento solo contengan letras y espacios
         if not self.validar_str(nombre):
             return
@@ -253,6 +262,11 @@ class SistemaGestionUniversitaria(ctk.CTk):
         codigo = self.entry_codigo.get()
         creditos = self.entry_creditos.get()
         
+        # Verificar que no haya campos vacíos
+        if not self.validar_no_vacio(nombre, codigo, creditos):
+            return
+
+        
         asignatura = Asignatura(nombre, codigo, creditos)
         tree = self.tab3.winfo_children()[1].winfo_children()[0]
         tree.insert("", "end", values=(asignatura.nombre, asignatura.codigo, asignatura.creditos))
@@ -261,6 +275,10 @@ class SistemaGestionUniversitaria(ctk.CTk):
         nombre = self.entries["Grupo"]["nombre"].get()
         num_grupo = self.entry_num_grupo.get()
         asignatura = self.entry_asignatura.get()
+        
+        # Verificar que no haya campos vacíos
+        if not self.validar_no_vacio(nombre, num_grupo, asignatura):
+            return
         
         grupo = Grupo(nombre, num_grupo, asignatura)
         tree = self.tab4.winfo_children()[1].winfo_children()[0]
