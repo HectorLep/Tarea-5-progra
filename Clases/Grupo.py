@@ -1,60 +1,54 @@
-class Grupo():
-    def __init__(self, n_grupo, asignatura, profesor, estudiantes):
-        self.n_grupo = n_grupo
-        self.asignatura = asignatura
-        self.profesor = profesor
-        self.estudiantes = []
+class Grupo:
+    def __init__(self, numero_grupo, asignatura, profesor):
+        self._numero_grupo = numero_grupo
+        self._asignatura = asignatura
+        self._profesor = profesor
+        self._estudiantes = []
         
-    #agregar_estudiante(estudiante: Estudiante): Agrega un estudiante al grupo con validación para evitar duplicados.
     def agregar_estudiante(self, estudiante):
-        if estudiante not in self.estudiantes:
-            self.estudiantes.append(estudiante)
-        else:
-            print(f'El estudiante {estudiante.nombre} ya está en el grupo')
+        if estudiante in self._estudiantes:
+            raise ValueError(f"El estudiante con matrícula {estudiante.matricula} ya está registrado en este grupo.")
+        self._estudiantes.append(estudiante)
+        return True
         
-    #eliminar_estudiante(matricula: str): Elimina un estudiante del grupo por su matrícula, asegurando que exista        
     def eliminar_estudiante(self, matricula):
-        for estudiante in self.estudiantes:
+        for estudiante in self._estudiantes:
             if estudiante.matricula == matricula:
-                self.estudiantes.remove(estudiante)
-                return
-        print(f'No se encontró un estudiante con la matrícula {matricula}')
+                self._estudiantes.remove(estudiante)
+                return True
+        raise ValueError(f"No se encontró un estudiante con matrícula {matricula} en este grupo.")
         
-    #mostrar_grupo(): Muestra la información completa del grupo, incluyendo asignatura, profesor y lista de estudiantes.
     def mostrar_grupo(self):
-        print(f'Grupo {self.n_grupo} de la asignatura {self.asignatura.nombre} impartida por el profesor {self.profesor.nombre} {self.profesor.apellido}')
-        print('Estudiantes:')
-        for estudiante in self.estudiantes:
-            print(estudiante.presentarse())
-        print()
-        
-    
-    #numero_grupo: Permite obtener y establecer el número del grupo.
+        info = f'Grupo {self.numero_grupo} de la asignatura {self.asignatura.nombre} impartida por el profesor {self.profesor.nombre} {self.profesor.apellido}\n'
+        info += 'Estudiantes:\n'
+        for estudiante in self._estudiantes:
+            info += f'- {estudiante.presentarse()}\n'
+        return info
+
     @property
-    def n_grupo(self):
-        return self.__n_grupo
+    def numero_grupo(self):
+        return self._numero_grupo
     
-    @n_grupo.setter
-    def n_grupo(self, n_grupo):
-        self.__n_grupo = n_grupo
+    @numero_grupo.setter
+    def numero_grupo(self, numero_grupo):
+        self._numero_grupo = numero_grupo
         
-    #asignatura: Permite obtener y establecer la asignatura del grupo.
     @property
     def asignatura(self):
-        return self.__asignatura
+        return self._asignatura
     
     @asignatura.setter
     def asignatura(self, asignatura):
-        self.__asignatura = asignatura
+        self._asignatura = asignatura
     
-    #estudiantes: Solo permite obtener la lista de estudiantes (no se puede establecer directamente).        
+    @property
+    def profesor(self):
+        return self._profesor
+    
+    @profesor.setter
+    def profesor(self, profesor):
+        self._profesor = profesor
+    
     @property
     def estudiantes(self):
-        return self.__estudiantes 
-    
-    @asignatura.setter
-    def estudiantes(self, estudiantes):
-        self.__estudiantes = estudiantes
-        
-
-    
+        return self._estudiantes

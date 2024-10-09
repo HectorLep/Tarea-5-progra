@@ -1,32 +1,46 @@
-class ProgramaAcademico():
-    #Atributos Privados: nombre (str) codigo (str) grupos (Lista protegida de objetos Grupo)
+
+# ProgramaAcademico.py
+class ProgramaAcademico:
     def __init__(self, nombre, codigo):
-        self.nombre = nombre
-        self.codigo = codigo
-        self.__grupos = []
+        self._nombre = nombre
+        self._codigo = codigo
+        self._grupos = []
     
-    
-    #agregar_grupo(grupo: Grupo): Agrega un grupo al programa académico con validación para evitar duplicados.
     def agregar_grupo(self, grupo):
-        if grupo not in self.__grupos:
-            self.__grupos.append(grupo)
-        else:
-            print(f'El grupo {grupo.n_grupo} ya está en el programa académico')
+        if any(g.numero_grupo == grupo.numero_grupo for g in self._grupos):
+            raise ValueError(f"El grupo {grupo.numero_grupo} ya está registrado en el programa académico.")
+        self._grupos.append(grupo)
+        return True
     
-    
-    #eliminar_grupo(numero_grupo: int): Elimina un grupo del programa académico por su número, asegurando que exista.
     def eliminar_grupo(self, numero_grupo):
-        for grupo in self.__grupos:
-            if grupo.n_grupo == numero_grupo:
-                self.__grupos.remove(grupo)
-                return
-        print(f'No se encontró un grupo con el número {numero_grupo}')
+        for grupo in self._grupos:
+            if grupo.numero_grupo == numero_grupo:
+                self._grupos.remove(grupo)
+                return True
+        raise ValueError(f"No se encontró el grupo {numero_grupo} en el programa académico.")
     
-    
-    
-    #mostrar_programa(): Muestra la información completa del programa académico, incluyendo todos los grupos asociados.
     def mostrar_programa(self):
-        print(f'Programa Académico: {self.nombre} ({self.codigo})')
-        for grupo in self.__grupos:
-            grupo.mostrar_grupo()
-        print()
+        info = f'Programa Académico: {self.nombre} ({self.codigo})\n'
+        for grupo in self._grupos:
+            info += grupo.mostrar_grupo() + '\n'
+        return info
+    
+    @property
+    def nombre(self):
+        return self._nombre
+    
+    @nombre.setter
+    def nombre(self, nombre):
+        self._nombre = nombre
+    
+    @property
+    def codigo(self):
+        return self._codigo
+    
+    @codigo.setter
+    def codigo(self, codigo):
+        self._codigo = codigo
+    
+    @property
+    def grupos(self):
+        return self._grupos

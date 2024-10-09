@@ -1,111 +1,106 @@
-class Persona():
+class Persona:
     def __init__(self, nombre, apellido, fecha_de_nacimiento):
-        self.nombre = nombre
-        self.apellido = apellido
-        self.fecha_de_nacimiento = fecha_de_nacimiento
+        self._nombre = nombre
+        self._apellido = apellido
+        self._fecha_de_nacimiento = fecha_de_nacimiento
         
-    def presentarse(self):
-        print(f'Hola, soy {self.nombre} {self.apellido} y nací el {self.fecha_de_nacimiento}')
+    def estudiar(self, materia, horas):
+        if horas <= 0:
+            raise ValueError("El número de horas debe ser mayor que 0.")
+        return f'El estudiante ha estudiado {materia} durante {horas} horas'
     
-    #nombre: Permite obtener y establecer el nombre.
+    def presentarse(self):
+        return f'{super().presentarse()}. Mi matrícula es {self.matricula}, estudio {self.carrera} y estoy en el semestre {self.semestre}'
+        
     @property
     def nombre(self):
-        return self.__nombre
+        return self._nombre
     
     @nombre.setter
     def nombre(self, nombre):
-        self.__nombre = nombre
+        self._nombre = nombre
         
-    #apellido: Permite obtener y establecer el apellido.
     @property
     def apellido(self):
-        return self.__apellido
+        return self._apellido
     
     @apellido.setter
     def apellido(self, apellido):
-        self.__apellido = apellido
+        self._apellido = apellido
         
-    #fecha_de_nacimiento: Permite obtener y establecer la fecha de nacimiento.
     @property
     def fecha_de_nacimiento(self):
-        return self.__fecha_de_nacimiento
+        return self._fecha_de_nacimiento
     
     @fecha_de_nacimiento.setter
     def fecha_de_nacimiento(self, fecha_de_nacimiento):
-        self.__fecha_de_nacimiento = fecha_de_nacimiento 
-        
+        self._fecha_de_nacimiento = fecha_de_nacimiento 
+
+# Estudiante.py
 class Estudiante(Persona):
-    #Atributos Privados:  matricula (str) carrera (str) semestre (int)
-    def __init__(self, nombre, apellido, fecha_de_nacimiento,matricula, carrera, semestre):    
+    def __init__(self, nombre, apellido, fecha_de_nacimiento, matricula, carrera, semestre):    
         super().__init__(nombre, apellido, fecha_de_nacimiento)
-        self.matricula = matricula
-        self.carrera = carrera
-        self.semestre = semestre
+        self._matricula = matricula
+        self._carrera = carrera
+        self._semestre = semestre
         
-    #estudiar(materia: str, horas: int): Imprime un mensaje indicando que el estudiante ha estudiado una materia durante cierta cantidad de horas
     def estudiar(self, materia, horas):
-        print(f'El estudiante ha estudiado {materia} durante {horas} horas')
+        return f'El estudiante ha estudiado {materia} durante {horas} horas'
     
-    #presentarse(): Sobrescribe el método de Persona para incluir información específica del estudiante
     def presentarse(self):
-        return f'Hola, soy {self.nombre} {self.apellido} y nací el {self.fecha_de_nacimiento}. Mi matrícula es {self.matricula}, estudio {self.carrera} y estoy en el semestre {self.semestre}'
+        return f'{super().presentarse()}. Mi matrícula es {self.matricula}, estudio {self.carrera} y estoy en el semestre {self.semestre}'
     
-    #matricula: Permite obtener y establecer la matrícula.
     @property
     def matricula(self):
-        return self.__matricula
+        return self._matricula
     
     @matricula.setter
     def matricula(self, matricula):
-        self.__matricula = matricula
+        self._matricula = matricula
     
-    #carrera: Permite obtener y establecer la carrera.
     @property
     def carrera(self):
-        return self.__carrera
+        return self._carrera
     
     @carrera.setter
     def carrera(self, carrera):
-        self.__carrera = carrera
+        self._carrera = carrera
     
-    #semestre: Permite obtener y establecer el semestre.
     @property
     def semestre(self):
-        return self.__semestre
+        return self._semestre
     
     @semestre.setter
     def semestre(self, semestre):
-        self.__semestre = semestre
-    
+        self._semestre = semestre
+
+# Profesor.py
 class Profesor(Persona):
-    def __init__(self, nombre, apellido, fecha_de_nacimiento,n_empleado, departamento):
+    def __init__(self, nombre, apellido, fecha_de_nacimiento, numero_empleado, departamento):
         super().__init__(nombre, apellido, fecha_de_nacimiento)
-        self.n_empleado = n_empleado
-        self.departamento = departamento
+        self._numero_empleado = numero_empleado
+        self._departamento = departamento
         
-    #enseñar(materia: str): Imprime un mensaje indicando que el profesor está enseñando una materia.
     def enseñar(self, materia):
-        print(f'El profesor está enseñando la materia {materia}')
-        
-    #presentarse(): Sobrescribe el método de Persona para incluir información específica del profesor.
+        if not materia:
+            raise ValueError("La materia no puede estar vacía.")
+        return f'El profesor está enseñando la materia {materia}'
+            
     def presentarse(self):
-        return f'Hola, soy {self.nombre} {self.apellido} y nací el {self.fecha_de_nacimiento}. Mi número de empleado es {self.n_empleado}'
+        return f'{super().presentarse()}. Mi número de empleado es {self.numero_empleado} y pertenezco al departamento de {self.departamento}'
     
-    #numero_empleado: Permite obtener y establecer el número de empleado.
     @property
-    def n_empleado(self):
-        return self.__n_empleado
+    def numero_empleado(self):
+        return self._numero_empleado
     
-    @n_empleado.setter
-    def n_empleado(self, n_empleado):
-        self.__n_empleado = n_empleado
+    @numero_empleado.setter
+    def numero_empleado(self, numero_empleado):
+        self._numero_empleado = numero_empleado
         
-    #departamento: Permite obtener y establecer el departamento.
     @property
     def departamento(self):
-        return self.__departamento
+        return self._departamento
     
     @departamento.setter
     def departamento(self, departamento):
-        self.__departamento = departamento
-        
+        self._departamento = departamento

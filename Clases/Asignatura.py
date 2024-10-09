@@ -1,38 +1,34 @@
-class Asignatura():
-    def __init__(self, nombre, codigo,creditos):
-        self.nombre = nombre
-        self.codigo = codigo
-        self.creditos = creditos
+class Asignatura:
+    def __init__(self, nombre, codigo, creditos):
+        self._nombre = nombre
+        self._codigo = codigo
+        self._creditos = creditos
 
-    #mostrar_informacion(): Imprime la información detallada de la asignatura
     def mostrar_informacion(self):
-        print('La asignatura {self.nombre} tiene el código {self.codigo} y {self.creditos} créditos')
-    
-    #nombre: Permite obtener y establecer el nombre de la asignatura.
+        if self._creditos <= 0:
+            raise ValueError("La cantidad de créditos debe ser mayor que 0.")
+        return f'La asignatura {self.nombre} tiene el código {self.codigo} y {self.creditos} créditos'
+        
     @property
     def nombre(self):
-        return self.__nombre
+        return self._nombre
     
     @nombre.setter
     def nombre(self, nombre):
-        self.__nombre = nombre
+        self._nombre = nombre
         
-    #codigo: Permite obtener y establecer el código de la asignatura.
     @property
     def codigo(self):
-        return self.__codigo
+        return self._codigo
     
     @codigo.setter
     def codigo(self, codigo):
-        self.__codigo = codigo
+        self._codigo = codigo
         
-    #creditos: Permite obtener y establecer los créditos de la asignatura.
     @property
     def creditos(self):
-        return self.__creditos
+        return self._creditos
     
     @creditos.setter
     def creditos(self, creditos):
-        self.__creditos = creditos
-        
-    
+        self._creditos = creditos
