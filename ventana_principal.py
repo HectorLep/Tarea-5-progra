@@ -151,6 +151,41 @@ class SistemaGestionUniversitaria(ctk.CTk):
         boton_eliminar.pack(pady=10)
 
         return tree
+    def eliminar_elemento(self, tree):
+        # Obtener el elemento seleccionado en el Treeview
+        seleccionado = tree.selection()
+        if not seleccionado:
+            CTkMessagebox(title="Error", message="Debe seleccionar un elemento para eliminar.", icon="warning")
+            return
+
+        # Obtener los valores del elemento seleccionado
+        valores = tree.item(seleccionado, 'values')
+        
+        # Determinar qué tipo de objeto es para eliminar de la lista correspondiente
+        if tree == self.tree_estudiantes:
+            matricula = valores[3]  # La matrícula está en la posición 3 de la fila
+            self.estudiantes = [e for e in self.estudiantes if e.matricula != matricula]
+            print(f"Estudiante con matrícula {matricula} eliminado.")
+        elif tree == self.tree_profesores:
+            num_empleado = valores[3]  # El número de empleado está en la posición 3 de la fila
+            self.profesores = [p for p in self.profesores if p.numero_empleado != num_empleado]
+            print(f"Profesor con número de empleado {num_empleado} eliminado.")
+        elif tree == self.tree_asignaturas:
+            codigo = valores[1]  # El código de la asignatura está en la posición 1 de la fila
+            self.asignaturas = [a for a in self.asignaturas if a.codigo != codigo]
+            print(f"Asignatura con código {codigo} eliminada.")
+        elif tree == self.tree_grupos:
+            num_grupo = valores[1]  # El número de grupo está en la posición 1 de la fila
+            self.grupos = [g for g in self.grupos if g.numero_grupo != num_grupo]
+            print(f"Grupo número {num_grupo} eliminado.")
+        elif tree == self.tree_programas:
+            codigo = valores[1]  # El código del programa está en la posición 1 de la fila
+            self.programas_academicos = [p for p in self.programas_academicos if p.codigo != codigo]
+            print(f"Programa académico con código {codigo} eliminado.")
+
+        # Eliminar el elemento del Treeview
+        tree.delete(seleccionado)
+        CTkMessagebox(title="Éxito", message="Elemento eliminado correctamente.", icon="info")
 
     def validar_no_vacio(self, *campos):
         for campo in campos:
