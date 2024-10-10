@@ -2,8 +2,6 @@ import customtkinter as ctk
 from tkinter import ttk
 from CTkMessagebox import CTkMessagebox
 import re
-
-# Importar clases necesarias
 from Clases.Persona import *
 from Clases.Asignatura import Asignatura
 from Clases.Grupo import Grupo
