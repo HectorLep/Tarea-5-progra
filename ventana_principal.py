@@ -303,17 +303,17 @@ class SistemaGestionUniversitaria(ctk.CTk):
             CTkMessagebox(title="Error de Validación", message="Datos de grupo inválidos", icon="warning")
             return
 
-        # Buscar la asignatura y el profesor correspondientes
-        asignatura = next((a for a in self.asignaturas if a.nombre == asignatura_nombre), None)
-        profesor = next((p for p in self.profesores if f"{p.nombre} {p.apellido}" == profesor_nombre), None)
+        # Buscar profesor y asignatura normalizando a minúsculas para evitar problemas de comparación
+        profesor = next((p for p in self.profesores if f"{p.nombre.lower()} {p.apellido.lower()}" == profesor_nombre.lower()), None)
+        asignatura = next((a for a in self.asignaturas if a.nombre.lower() == asignatura_nombre.lower()), None)
 
-        if not asignatura or not profesor:
-            CTkMessagebox(title="Error", message="Asignatura o profesor no encontrado", icon="warning")
+        # Si no encuentra profesor o asignatura, muestra un mensaje de error
+        if not profesor:
+            CTkMessagebox(title="Error", message="Profesor no encontrado", icon="warning")
             return
 
-        valores = (nombre_grupo, num_grupo, asignatura_nombre, profesor_nombre)
-        if self.es_duplicado(self.tree_grupos, valores):
-            CTkMessagebox(title="Error", message="El grupo ya está registrado.", icon="warning")
+        if not asignatura:
+            CTkMessagebox(title="Error", message="Asignatura no encontrada", icon="warning")
             return
         
         nuevo_grupo = Grupo(num_grupo, asignatura, profesor)
