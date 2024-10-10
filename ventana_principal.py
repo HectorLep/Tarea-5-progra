@@ -60,7 +60,7 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
     def configurar_pestana4(self):
         self.configurar_formulario(self.tab4, "Grupo", self.ingresar_grupo)
-        self.tree_grupos = self.configurar_treeview(self.tab4, ["Nombre", "Número Grupo", "Asignatura", "Profesor"])
+        self.tree_grupos = self.configurar_treeview(self.tab4, ["Nombre", "Número Grupo", "Asignatura", "Estudiante"])
 
     def configurar_pestana5(self):
         self.configurar_formulario(self.tab5, "Programa Académico", self.ingresar_programa_academico)
@@ -121,10 +121,10 @@ class SistemaGestionUniversitaria(ctk.CTk):
         self.entry_creditos = self._crear_entry(frame, labels_text[1])
 
     def _crear_campos_grupo(self, frame):
-        labels_text = ["Número de Grupo:", "Asignatura:", "Profesor:"]
+        labels_text = ["Número de Grupo:", "Asignatura:", "Estudiante:"]
         self.entry_num_grupo = self._crear_entry(frame, labels_text[0])
         self.entry_asignatura = self._crear_entry(frame, labels_text[1])
-        self.entry_profesor = self._crear_entry(frame, labels_text[2])
+        self.entry_estudiante = self._crear_entry(frame, labels_text[2])
 
     def _crear_campos_programa_academico(self, frame):
         labels_text = ["Código:"]
@@ -160,67 +160,29 @@ class SistemaGestionUniversitaria(ctk.CTk):
 
         # Obtener los valores del elemento seleccionado
         valores = tree.item(seleccionado, 'values')
-    
+        
         # Determinar qué tipo de objeto es para eliminar de la lista correspondiente
         if tree == self.tree_estudiantes:
             matricula = valores[3]  # La matrícula está en la posición 3 de la fila
-            # Eliminar al estudiante de todos los grupos a los que pertenece
-            for grupo in self.grupos:
-                try:
-                    grupo.eliminar_estudiante(matricula)
-                    print(f"Estudiante con matrícula {matricula} eliminado del grupo {grupo.numero_grupo}.")
-                except ValueError:
-                    # Si no se encuentra en el grupo, no se realiza ninguna acción
-                    pass
-        
-            # Eliminar el estudiante de la lista de estudiantes
             self.estudiantes = [e for e in self.estudiantes if e.matricula != matricula]
             print(f"Estudiante con matrícula {matricula} eliminado.")
-        
         elif tree == self.tree_profesores:
             num_empleado = valores[3]  # El número de empleado está en la posición 3 de la fila
             self.profesores = [p for p in self.profesores if p.numero_empleado != num_empleado]
             print(f"Profesor con número de empleado {num_empleado} eliminado.")
-        
         elif tree == self.tree_asignaturas:
             codigo = valores[1]  # El código de la asignatura está en la posición 1 de la fila
             self.asignaturas = [a for a in self.asignaturas if a.codigo != codigo]
             print(f"Asignatura con código {codigo} eliminada.")
-        
         elif tree == self.tree_grupos:
             num_grupo = valores[1]  # El número de grupo está en la posición 1 de la fila
-            for programa in self.programas_academicos:
-                try:
-                    programa.eliminar_grupo(num_grupo)
-                    print(f"Grupo número {num_grupo} eliminado del programa {programa.nombre}.")
-                except ValueError:
-                    pass  # Si el grupo no pertenece a este programa, continuar
-        
-            # Actualizar la lista de grupos eliminando el grupo
             self.grupos = [g for g in self.grupos if g.numero_grupo != num_grupo]
             print(f"Grupo número {num_grupo} eliminado.")
-        
         elif tree == self.tree_programas:
             codigo = valores[1]  # El código del programa está en la posición 1 de la fila
-            programa_a_eliminar = None
-            for programa in self.programas_academicos:
-                if programa.codigo == codigo:
-                    programa_a_eliminar = programa
-                    break
-                
-            if programa_a_eliminar:
-                # Verificar si hay grupos asociados al programa
-                if programa_a_eliminar.grupos:
-                    confirmacion = CTkMessagebox(title="Confirmación", 
-                                                 message=f"El programa tiene {len(programa_a_eliminar.grupos)} grupos. ¿Desea continuar con la eliminación?",
-                                                 icon="warning", options=["Sí", "No"]).get()
-                    if confirmacion == "No":
-                        return
-            
-                # Eliminar el programa académico
-                self.programas_academicos.remove(programa_a_eliminar)
-                print(f"Programa académico con código {codigo} eliminado.")
-    
+            self.programas_academicos = [p for p in self.programas_academicos if p.codigo != codigo]
+            print(f"Programa académico con código {codigo} eliminado.")
+
         # Eliminar el elemento del Treeview
         tree.delete(seleccionado)
         CTkMessagebox(title="Éxito", message="Elemento eliminado correctamente.", icon="info")
@@ -333,30 +295,30 @@ class SistemaGestionUniversitaria(ctk.CTk):
         nombre_grupo = self.entries["Grupo"]["nombre"].get()
         num_grupo = self.entry_num_grupo.get()
         asignatura_nombre = self.entry_asignatura.get()
-        profesor_nombre = self.entry_profesor.get()
+        estudiante_nombre = self.entry_estudiante.get()
 
-        if not self.validar_no_vacio(nombre_grupo, num_grupo, asignatura_nombre, profesor_nombre):
+        if not self.validar_no_vacio(nombre_grupo, num_grupo, asignatura_nombre, estudiante_nombre):
             return
         if not (self.validar_str(nombre_grupo) and num_grupo.isdigit()):
             CTkMessagebox(title="Error de Validación", message="Datos de grupo inválidos", icon="warning")
             return
 
-        # Buscar profesor y asignatura normalizando a minúsculas para evitar problemas de comparación
-        profesor = next((p for p in self.profesores if f"{p.nombre.lower()} {p.apellido.lower()}" == profesor_nombre.lower()), None)
+        # Buscar estudiante y asignatura normalizando a minúsculas para evitar problemas de comparación
+        estudiante = next((p for p in self.estudiantes if f"{p.nombre.lower()} {p.apellido.lower()}" == estudiante_nombre.lower()), None)
         asignatura = next((a for a in self.asignaturas if a.nombre.lower() == asignatura_nombre.lower()), None)
 
-        # Si no encuentra profesor o asignatura, muestra un mensaje de error
-        if not profesor:
-            CTkMessagebox(title="Error", message="Profesor no encontrado", icon="warning")
+        # Si no encuentra estudiante o asignatura, muestra un mensaje de error
+        if not estudiante:
+            CTkMessagebox(title="Error", message="Estudiante no encontrado", icon="warning")
             return
 
         if not asignatura:
             CTkMessagebox(title="Error", message="Asignatura no encontrada", icon="warning")
             return
         
-        nuevo_grupo = Grupo(num_grupo, asignatura, profesor)
+        nuevo_grupo = Grupo(num_grupo, asignatura, estudiante)
         self.grupos.append(nuevo_grupo)
-        self.tree_grupos.insert('', 'end', values=(nombre_grupo, num_grupo, asignatura_nombre, profesor_nombre))
+        self.tree_grupos.insert('', 'end', values=(nombre_grupo, num_grupo, asignatura_nombre, estudiante_nombre))
         print(f"Grupo ingresado: {nuevo_grupo.numero_grupo} - Asignatura: {nuevo_grupo.asignatura.nombre}")
 
     def ingresar_programa_academico(self):
